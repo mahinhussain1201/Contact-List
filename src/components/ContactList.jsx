@@ -1,5 +1,4 @@
 import React from 'react'
-import ContactCard from './ContactCard.jsx'
 
 function Spinner() {
   return (
