@@ -137,8 +137,90 @@ function SearchBar({ value, onChange }) {
   )
 }
 
+// Add Contact Form Component
+function AddContactForm({ onAdd }) {
+  const [first, setFirst] = useState('')
+  const [last, setLast] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [avatar, setAvatar] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const id = (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`)
+    const pic = avatar || 'https://via.placeholder.com/96'
+    const newContact = {
+      login: { uuid: id },
+      name: { first: first.trim(), last: last.trim() },
+      email: email.trim(),
+      phone: phone.trim(),
+      picture: { thumbnail: pic, large: pic },
+      __source: 'user'
+    }
+    onAdd(newContact)
+    setFirst(''); setLast(''); setEmail(''); setPhone(''); setAvatar('')
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-6 bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input value={first} onChange={(e)=>setFirst(e.target.value)} placeholder="First name" required className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input value={last} onChange={(e)=>setLast(e.target.value)} placeholder="Last name" required className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input value={email} onChange={(e)=>setEmail(e.target.value)} type="email" placeholder="Email" required className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input value={phone} onChange={(e)=>setPhone(e.target.value)} placeholder="Phone" required className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <input value={avatar} onChange={(e)=>setAvatar(e.target.value)} placeholder="Avatar URL (optional)" className="px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:col-span-2" />
+      </div>
+      <div className="mt-3 flex justify-end">
+        <button type="submit" className="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition shadow-sm">Add Contact</button>
+      </div>
+    </form>
+  )
+}
+
+function Modal({ open, onClose, children, title }) {
+  if (!open) return null
+  return (
+    <div className="fixed inset-0 z-20 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative z-30 w-full max-w-lg mx-auto">
+        <div className="bg-white rounded-xl shadow-lg ring-1 ring-black/5">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+            <button onClick={onClose} className="p-2 rounded-md hover:bg-gray-100" aria-label="Close">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5 text-gray-600"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div className="p-5">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Toasts({ toasts, onDismiss }) {
+  return (
+    <div className="fixed top-4 right-4 z-30 space-y-2">
+      {toasts.map(t => (
+        <div key={t.id} className={`flex items-start gap-3 rounded-lg shadow-sm ring-1 ring-black/5 px-4 py-3 ${t.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-emerald-50 text-emerald-800'}`}>
+          <div className="mt-0.5">
+            {t.type === 'error' ? (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+            )}
+          </div>
+          <div className="text-sm font-medium">{t.message}</div>
+          <button onClick={() => onDismiss(t.id)} className="ml-2 text-sm text-gray-500 hover:text-gray-700" aria-label="Dismiss">Dismiss</button>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // ContactList Component
-function ContactList({ contacts, loading, error, query }) {
+function ContactList({ contacts, loading, error, query, onDelete }) {
   if (loading) {
     return (
       <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-lg">
@@ -169,22 +251,29 @@ function ContactList({ contacts, loading, error, query }) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {contacts.map((contact, idx) => (
         <div
-          key={idx}
+          key={contact?.login?.uuid || idx}
           className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-start gap-3">
             <img
               src={contact?.picture?.thumbnail}
               alt={`${contact?.name?.first} ${contact?.name?.last}`}
               className="w-12 h-12 rounded-full"
             />
-            <div>
-              <h3 className="font-medium text-gray-900">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-medium text-gray-900 truncate">
                 {contact?.name?.first} {contact?.name?.last}
               </h3>
-              <p className="text-sm text-gray-600">{contact?.phone}</p>
-              <p className="text-sm text-gray-600">{contact?.email}</p>
+              <p className="text-sm text-gray-600 truncate">{contact?.phone}</p>
+              <p className="text-sm text-gray-600 truncate">{contact?.email}</p>
             </div>
+            <button
+              onClick={() => onDelete(contact)}
+              className="ml-2 text-sm px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50"
+              aria-label="Delete contact"
+            >
+              Delete
+            </button>
           </div>
         </div>
       ))}
@@ -198,6 +287,10 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [addedContacts, setAddedContacts] = useState([])
+  const [deletedIds, setDeletedIds] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [toasts, setToasts] = useState([])
 
   useEffect(() => {
     let isMounted = true
@@ -215,19 +308,63 @@ export default function App() {
         if (isMounted) setLoading(false)
       }
     }
+    // Load persisted user data
+    try {
+      const storedAdded = JSON.parse(localStorage.getItem('addedContacts') || '[]')
+      const storedDeleted = JSON.parse(localStorage.getItem('deletedContactIds') || '[]')
+      if (Array.isArray(storedAdded)) setAddedContacts(storedAdded)
+      if (Array.isArray(storedDeleted)) setDeletedIds(storedDeleted)
+    } catch {}
+
     fetchContacts()
     return () => { isMounted = false }
   }, [])
 
+  // Persist changes
+  useEffect(() => {
+    try { localStorage.setItem('addedContacts', JSON.stringify(addedContacts)) } catch {}
+  }, [addedContacts])
+  useEffect(() => {
+    try { localStorage.setItem('deletedContactIds', JSON.stringify(deletedIds)) } catch {}
+  }, [deletedIds])
+
+  const combined = useMemo(() => {
+    const deletedSet = new Set(deletedIds)
+    const base = contacts.filter(c => !deletedSet.has(c?.login?.uuid))
+    return [...addedContacts, ...base]
+  }, [contacts, addedContacts, deletedIds])
+
   const filtered = useMemo(() => {
-    if (!query) return contacts
+    if (!query) return combined
     const q = query.toLowerCase()
-    return contacts.filter(c => {
+    return combined.filter(c => {
       const first = c?.name?.first || ''
       const last = c?.name?.last || ''
       return first.toLowerCase().includes(q) || last.toLowerCase().includes(q)
     })
-  }, [contacts, query])
+  }, [combined, query])
+
+  const handleAdd = (contact) => {
+    setAddedContacts(prev => [contact, ...prev])
+    setIsModalOpen(false)
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    setToasts(prev => [...prev, { id, type: 'success', message: 'Contact added successfully.' }])
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000)
+  }
+
+  const handleDelete = (contact) => {
+    const id = contact?.login?.uuid
+    const isUser = contact?.__source === 'user'
+    if (!id) return
+    if (isUser) {
+      setAddedContacts(prev => prev.filter(c => c?.login?.uuid !== id))
+    } else {
+      setDeletedIds(prev => Array.from(new Set([...prev, id])))
+    }
+    const tid = `${Date.now()}-${Math.random().toString(16).slice(2)}`
+    setToasts(prev => [...prev, { id: tid, type: 'success', message: 'Contact deleted.' }])
+    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== tid)), 3000)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative">
@@ -241,7 +378,22 @@ export default function App() {
 
         <SearchBar value={query} onChange={setQuery} />
 
-        <ContactList contacts={filtered} loading={loading} error={error} query={query} />
+        <ContactList contacts={filtered} loading={loading} error={error} query={query} onDelete={handleDelete} />
+
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="fixed bottom-6 right-6 z-20 inline-flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          aria-label="Add contact"
+          title="Add contact"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+        </button>
+
+        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add Contact">
+          <AddContactForm onAdd={handleAdd} />
+        </Modal>
+
+        <Toasts toasts={toasts} onDismiss={(id)=>setToasts(prev=>prev.filter(t=>t.id!==id))} />
       </main>
     </div>
   )
