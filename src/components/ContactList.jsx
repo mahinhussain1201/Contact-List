@@ -1,13 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
-function Spinner() {
-  return (
-    <div className="flex justify-center py-16">
-      <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
-    </div>
-  )
-}
-
 export default function ContactList({ contacts, loading, error, query, onDelete }) {
   if (loading) return (
     <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-lg">
@@ -55,7 +47,6 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
   const [hoverLetter, setHoverLetter] = useState('')
   const [activeLetter, setActiveLetter] = useState('')
 
-  // Deterministic initials gradient from name
   const initialsBg = (first = '', last = '') => {
     const str = `${first}${last}`
     let hash = 0
@@ -65,7 +56,6 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
     return `linear-gradient(135deg, hsl(${hue}, 80%, 80%), hsl(${hue2}, 80%, 75%))`
   }
 
-  // Observe sections to highlight current letter in the rail
   useEffect(() => {
     const keys = Array.from(groups.keys())
     if (!keys.length) return
@@ -125,13 +115,9 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                         willChange: 'transform'
                       }}
                     />
-                    {/* Inset panel to create border effect */}
                     <div className="absolute inset-[5px] rounded-[15px] bg-white/80 backdrop-blur-md ring-1 ring-white/30" />
-
-                    {/* Subtle gradient content overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Content */}
                     <div className="relative z-10 p-5">
                         <div className="flex items-start gap-4">
                           <div className="relative">
@@ -156,12 +142,10 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                               {contact?.name?.first} {contact?.name?.last}
                             </h3>
                             <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
-                              {/* mail icon */}
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                               <span className="truncate">{contact?.email}</span>
                             </div>
                             <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
-                              {/* phone icon */}
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h1.28a2 2 0 011.94 1.515l.57 2.28a2 2 0 01-.45 1.86l-1.1 1.1a16 16 0 006.36 6.36l1.1-1.1a2 2 0 011.86-.45l2.28.57A2 2 0 0121 17.72V19a2 2 0 01-2 2h-1C9.82 21 3 14.18 3 6V5z"/></svg>
                               <span className="truncate">{contact?.phone}</span>
                             </div>
@@ -183,7 +167,6 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
         ))}
       </div>
 
-      {/* Right-side alphabet index */}
       <div
         className="hidden sm:flex flex-col items-center gap-1 fixed right-3 top-1/2 -translate-y-1/2 z-20 select-none"
         onMouseLeave={() => setHoverLetter('')}
@@ -205,7 +188,6 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
         ))}
       </div>
 
-      {/* Hover overlay showing current letter */}
       {hoverLetter && (
         <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center">
           <div className="rounded-2xl bg-black/40 text-white text-6xl font-extrabold px-8 py-6 shadow-2xl">

@@ -6,7 +6,6 @@ import AddContactForm from './components/AddContactForm.jsx'
 import Modal from './components/Modal.jsx'
 import Toasts from './components/Toasts.jsx'
 
-// Main App Component
 export default function App() {
   const [contacts, setContacts] = useState([])
   const [query, setQuery] = useState('')
@@ -33,7 +32,6 @@ export default function App() {
         if (isMounted) setLoading(false)
       }
     }
-    // Load persisted user data
     try {
       const storedAdded = JSON.parse(localStorage.getItem('addedContacts') || '[]')
       const storedDeleted = JSON.parse(localStorage.getItem('deletedContactIds') || '[]')
@@ -45,7 +43,6 @@ export default function App() {
     return () => { isMounted = false }
   }, [])
 
-  // Persist changes
   useEffect(() => {
     try { localStorage.setItem('addedContacts', JSON.stringify(addedContacts)) } catch {}
   }, [addedContacts])
@@ -122,14 +119,13 @@ export default function App() {
 
         <footer className="mt-10 mb-6 text-center text-xs text-gray-600">
           <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/70 backdrop-blur-md ring-1 ring-gray-200 shadow-md hover:shadow-lg transition-all duration-300">
-            <span className="font-medium text-gray-700">Created by</span>
+            <span className="font-medium text-gray-700">Created by:</span>
             <span className="text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-200">
               Mahin Hussain
             </span>
             <span className="text-gray-400">•</span>
             <span className="text-purple-600 font-medium">IIT Kharagpur</span>
-
-            {/* LinkedIn */}
+            <span className="text-gray-400">•</span>
             <a
               href="https://www.linkedin.com/in/mahin-hussain" 
               target="_blank"
@@ -142,7 +138,6 @@ export default function App() {
               </svg>
             </a>
 
-            {/* Email */}
             <a
               href="mailto:mahinhussain1201@gmail.com" 
               className="text-red-500 hover:text-red-600 transition-colors duration-200"

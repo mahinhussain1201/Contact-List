@@ -1,7 +1,6 @@
 import React from 'react'
 
 export default function ContactCard({ contact, onDelete }) {
-  // Deterministic initials gradient from name
   const initialsBg = (first = '', last = '') => {
     const str = `${first}${last}`
     let hash = 0
@@ -27,7 +26,6 @@ export default function ContactCard({ contact, onDelete }) {
       `}</style>
       
       <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.015]">
-        {/* Rotating gradient border (full perimeter) */}
         <span
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100"
@@ -38,14 +36,8 @@ export default function ContactCard({ contact, onDelete }) {
             willChange: 'transform'
           }}
         />
-        
-        {/* Inset panel to create border effect */}
         <div className="absolute inset-[5px] rounded-[15px] bg-white/80 backdrop-blur-md ring-1 ring-white/30" />
-
-        {/* Subtle gradient content overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {/* Content */}
         <div className="relative z-10 p-5">
           <div className="flex items-start gap-4">
             <div className="relative">
@@ -71,14 +63,12 @@ export default function ContactCard({ contact, onDelete }) {
                 {first} {last}
               </h3>
               <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
-                {/* mail icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <span className="truncate">{email}</span>
               </div>
               <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
-                {/* phone icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h1.28a2 2 0 011.94 1.515l.57 2.28a2 2 0 01-.45 1.86l-1.1 1.1a16 16 0 006.36 6.36l1.1-1.1a2 2 0 011.86-.45l2.28.57A2 2 0 0121 17.72V19a2 2 0 01-2 2h-1C9.82 21 3 14.18 3 6V5z"/>
                 </svg>
