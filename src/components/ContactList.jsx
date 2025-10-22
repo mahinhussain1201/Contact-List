@@ -83,11 +83,17 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                       <div className="relative p-5">
                         <div className="flex items-start gap-4">
                           <div className="relative">
-                            <img
-                              src={contact?.picture?.thumbnail}
-                              alt={`${contact?.name?.first} ${contact?.name?.last}`}
-                              className="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-md group-hover:ring-4 group-hover:shadow-lg transition-all duration-300"
-                            />
+                            {contact?.picture?.thumbnail && !/placeholder\.com/.test(contact?.picture?.thumbnail) ? (
+                              <img
+                                src={contact?.picture?.thumbnail}
+                                alt={`${contact?.name?.first} ${contact?.name?.last}`}
+                                className="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-md group-hover:ring-4 group-hover:shadow-lg transition-all duration-300"
+                              />
+                            ) : (
+                              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-lg ring-2 ring-white shadow-md">
+                                {(contact?.name?.first?.[0] || '').toUpperCase()}{(contact?.name?.last?.[0] || '').toUpperCase()}
+                              </div>
+                            )}
                             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300" />
                           </div>
                           <div className="min-w-0 flex-1">

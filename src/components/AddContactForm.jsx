@@ -61,14 +61,15 @@ export default function AddContactForm({ onAdd }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     const id = (globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`)
-    const pic = avatarPreview || 'https://via.placeholder.com/96'
     const newContact = {
       login: { uuid: id },
       name: { first: first.trim(), last: last.trim() },
       email: email.trim(),
       phone: phone.trim(),
-      picture: { thumbnail: pic, large: pic },
       __source: 'user'
+    }
+    if (avatarPreview) {
+      newContact.picture = { thumbnail: avatarPreview, large: avatarPreview }
     }
     if (typeof onAdd === 'function') onAdd(newContact)
     setFirst('')
