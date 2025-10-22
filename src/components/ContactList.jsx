@@ -71,32 +71,50 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
             <div className="sticky top-0 z-0 -mx-2 px-2">
               <div className="inline-flex items-center rounded-full bg-gray-100/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-600 ring-1 ring-gray-200">{letter}</div>
             </div>
-            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
               {groups.get(letter).map((contact, idx) => (
-                <div
-                  key={contact?.login?.uuid || `${letter}-${idx}`}
-                  className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200"
-                >
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={contact?.picture?.thumbnail}
-                      alt={`${contact?.name?.first} ${contact?.name?.last}`}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-medium text-gray-900 truncate">
-                        {contact?.name?.first} {contact?.name?.last}
-                      </h3>
-                      <p className="text-sm text-gray-600 truncate">{contact?.phone}</p>
-                      <p className="text-sm text-gray-600 truncate">{contact?.email}</p>
+                <div key={contact?.login?.uuid || `${letter}-${idx}`} className="relative">
+                  {/* Gradient border wrapper */}
+                  <div className="rounded-2xl p-[1px] bg-gradient-to-br from-purple-300/40 via-blue-200/30 to-pink-200/40">
+                    <div className="group relative rounded-2xl bg-white/80 backdrop-blur-md shadow-lg ring-1 ring-white/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] overflow-hidden">
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                      <div className="relative p-5">
+                        <div className="flex items-start gap-4">
+                          <div className="relative">
+                            <img
+                              src={contact?.picture?.thumbnail}
+                              alt={`${contact?.name?.first} ${contact?.name?.last}`}
+                              className="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-md group-hover:ring-4 group-hover:shadow-lg transition-all duration-300"
+                            />
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 blur-md transition-opacity duration-300" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-gray-900 truncate group-hover:text-purple-700 transition-colors duration-200">
+                              {contact?.name?.first} {contact?.name?.last}
+                            </h3>
+                            <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
+                              {/* mail icon */}
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                              <span className="truncate">{contact?.email}</span>
+                            </div>
+                            <div className="mt-1 flex items-center gap-2 text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">
+                              {/* phone icon */}
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h1.28a2 2 0 011.94 1.515l.57 2.28a2 2 0 01-.45 1.86l-1.1 1.1a16 16 0 006.36 6.36l1.1-1.1a2 2 0 011.86-.45l2.28.57A2 2 0 0121 17.72V19a2 2 0 01-2 2h-1C9.82 21 3 14.18 3 6V5z"/></svg>
+                              <span className="truncate">{contact?.phone}</span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => onDelete?.(contact)}
+                            className="ml-2 text-xs px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50 self-start"
+                            aria-label="Delete contact"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => onDelete?.(contact)}
-                      className="ml-2 text-sm px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50"
-                      aria-label="Delete contact"
-                    >
-                      Delete
-                    </button>
                   </div>
                 </div>
               ))}
