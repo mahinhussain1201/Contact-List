@@ -114,11 +114,11 @@ export default function SearchBar({ value, onChange }) {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .search-container.focused {
-          width: 340px;
+          width: 420px;
           transform: scale(1.05);
         }
         .search-container:not(.focused) {
-          width: 240px;
+          width: 320px;
         }
         .search-icon {
           transition: all 0.3s ease;
@@ -138,10 +138,10 @@ export default function SearchBar({ value, onChange }) {
         onMouseMove={handleMouseMove}
       >
         <div
-          className={`flex items-center w-full rounded-full border relative overflow-hidden backdrop-blur-md transition-all duration-300 ${
+          className={`flex items-center w-full rounded-full border-2 relative overflow-hidden backdrop-blur-md transition-all duration-300 ${
             isFocused 
-              ? 'border-white/0 ring-1 ring-white/50 shadow-xl bg-white/40' 
-              : 'border-white/70 bg-white/50 shadow'
+              ? 'border-transparent ring-2 ring-white/70 shadow-xl bg-white/60' 
+              : 'border-white/90 bg-white/60 shadow'
           }`}
           style={{
             boxShadow: isClicked
@@ -207,7 +207,7 @@ export default function SearchBar({ value, onChange }) {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)}
             className={`w-full py-3 bg-transparent outline-none placeholder:text-gray-400 font-medium text-base relative z-10 transition-all duration-300 ${
-              isFocused ? 'text-gray-800 tracking-wide' : 'text-gray-600'
+              isFocused ? 'text-gray-800 tracking-wide border-blue-500 shadow-sm' : 'text-gray-600 border-gray-300'
             }`}
           />
 
