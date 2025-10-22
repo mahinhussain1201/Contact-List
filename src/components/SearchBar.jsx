@@ -106,10 +106,9 @@ export default function SearchBar({ value, onChange }) {
           50% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.5); }
         }
         @keyframes gradient-shift {
-          0% { background: linear-gradient(90deg, #f6d365 0%, #fda085 100%); }
-          33% { background: linear-gradient(90deg, #a1c4fd 0%, #c2e9fb 100%); }
-          66% { background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%); }
-          100% { background: linear-gradient(90deg, #f6d365 0%, #fda085 100%); }
+          0% { background: linear-gradient(90deg, #93c5fd 0%, #c4b5fd 50%, #fbcfe8 100%); }
+          50% { background: linear-gradient(90deg, #c4b5fd 0%, #fbcfe8 50%, #93c5fd 100%); }
+          100% { background: linear-gradient(90deg, #93c5fd 0%, #c4b5fd 50%, #fbcfe8 100%); }
         }
         .search-container {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -141,12 +140,12 @@ export default function SearchBar({ value, onChange }) {
         <div
           className={`flex items-center w-full rounded-full border relative overflow-hidden backdrop-blur-md transition-all duration-300 ${
             isFocused 
-              ? 'border-transparent shadow-xl' 
-              : 'border-gray-200 bg-white/30'
+              ? 'border-white/0 ring-1 ring-white/50 shadow-xl bg-white/40' 
+              : 'border-white/70 bg-white/50 shadow'
           }`}
           style={{
             boxShadow: isClicked
-              ? "0 0 40px rgba(139, 92, 246, 0.5), 0 0 15px rgba(236, 72, 153, 0.7) inset"
+              ? "0 0 40px rgba(147, 197, 253, 0.45), 0 0 15px rgba(196, 181, 253, 0.6) inset"
               : isFocused
               ? "0 15px 35px rgba(0, 0, 0, 0.2)"
               : "0 0 0 rgba(0, 0, 0, 0)",

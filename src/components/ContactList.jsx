@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 function Spinner() {
   return (
@@ -53,6 +53,39 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
 
   const sectionRefs = useRef({})
   const [hoverLetter, setHoverLetter] = useState('')
+  const [activeLetter, setActiveLetter] = useState('')
+
+  // Deterministic initials gradient from name
+  const initialsBg = (first = '', last = '') => {
+    const str = `${first}${last}`
+    let hash = 0
+    for (let i = 0; i < str.length; i++) hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0
+    const hue = Math.abs(hash) % 360
+    const hue2 = (hue + 30) % 360
+    return `linear-gradient(135deg, hsl(${hue}, 80%, 80%), hsl(${hue2}, 80%, 75%))`
+  }
+
+  // Observe sections to highlight current letter in the rail
+  useEffect(() => {
+    const keys = Array.from(groups.keys())
+    if (!keys.length) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const letter = entry.target.getAttribute('data-letter') || ''
+            setActiveLetter(letter)
+          }
+        })
+      },
+      { root: null, rootMargin: '-45% 0px -50% 0px', threshold: 0.0 }
+    )
+    keys.forEach((ltr) => {
+      const el = sectionRefs.current[ltr]
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [groups])
 
   const scrollToLetter = (letter) => {
     const el = sectionRefs.current[letter]
@@ -73,14 +106,14 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
       `}</style>
       <div className="space-y-8">
         {Array.from(groups.keys()).sort().map((letter) => (
-          <section key={letter} ref={(el) => { sectionRefs.current[letter] = el }} id={`section-${letter}`}>
+          <section key={letter} ref={(el) => { sectionRefs.current[letter] = el }} id={`section-${letter}`} data-letter={letter}>
             <div className="sticky top-0 z-0 -mx-2 px-2">
               <div className="inline-flex items-center rounded-full bg-gray-100/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-600 ring-1 ring-gray-200">{letter}</div>
             </div>
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
               {groups.get(letter).map((contact, idx) => (
                 <div key={contact?.login?.uuid || `${letter}-${idx}`} className="relative">
-                  <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+                  <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.015]">
                     {/* Rotating gradient border (full perimeter) */}
                     <span
                       aria-hidden
@@ -109,7 +142,10 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                                 className="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-md group-hover:ring-4 group-hover:shadow-lg transition-all duration-300"
                               />
                             ) : (
-                              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-lg ring-2 ring-white shadow-md">
+                              <div
+                                className="w-14 h-14 rounded-full flex items-center justify-center text-white font-semibold text-lg ring-2 ring-white shadow-md"
+                                style={{ backgroundImage: initialsBg(contact?.name?.first, contact?.name?.last) }}
+                              >
                                 {(contact?.name?.first?.[0] || '').toUpperCase()}{(contact?.name?.last?.[0] || '').toUpperCase()}
                               </div>
                             )}
@@ -132,7 +168,7 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                           </div>
                           <button
                             onClick={() => onDelete?.(contact)}
-                            className="ml-2 text-xs px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50 self-start"
+                            className="ml-2 text-xs px-2 py-1 rounded-md border border-red-200 text-red-700 hover:bg-red-50 self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/60"
                             aria-label="Delete contact"
                           >
                             Delete
@@ -158,8 +194,9 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
             onMouseEnter={() => setHoverLetter(ltr)}
             onMouseDown={(e) => { e.preventDefault(); scrollToLetter(ltr) }}
             onClick={(e) => { e.preventDefault(); scrollToLetter(ltr) }}
-            className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-semibold transition 
-              ${groups.has(ltr) ? 'text-gray-700 hover:bg-gray-200/70' : 'text-gray-300 cursor-default'}`}
+            className={`w-6 h-6 flex items-center justify-center rounded text-[10px] font-semibold transition outline-none
+              ${groups.has(ltr) ? 'text-gray-700 hover:bg-white/60' : 'text-gray-300 cursor-default'}
+              ${activeLetter === ltr ? 'bg-white/70 text-purple-700 ring-1 ring-white/80' : ''}`}
             aria-label={`Jump to ${ltr}`}
             title={`Jump to ${ltr}`}
           >

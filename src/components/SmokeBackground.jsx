@@ -4,19 +4,22 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.size = Math.random() * 5 + 2;
-    this.speedX = Math.random() * 2 - 1;
-    this.speedY = -Math.random() * 3 - 1;
+    this.size = Math.random() * 4 + 1.5;
+    this.speedX = (Math.random() * 1.4 - 0.7);
+    this.speedY = -(Math.random() * 2.2 + 0.6);
     this.life = 100;
     this.initialSize = this.size;
-    this.hue = Math.random() * 360;
+    // Pastel-ish hues (blue/purple/pink band)
+    const pastelBand = [210, 260, 320];
+    const base = pastelBand[Math.floor(Math.random() * pastelBand.length)];
+    this.hue = (base + Math.random() * 20 - 10 + 360) % 360;
   }
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
     this.life -= 1;
     this.size = Math.max(0, this.initialSize * (this.life / 100));
-    this.hue = (this.hue + 0.5) % 360;
+    this.hue = (this.hue + 0.3) % 360;
   }
 }
 
@@ -25,6 +28,7 @@ export default function SmokeBackground() {
   const particlesRef = useRef([])
   const mousePosRef = useRef({ x: 0, y: 0 })
   const animationFrameRef = useRef()
+  const lastAutoGenRef = useRef(0)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -39,8 +43,8 @@ export default function SmokeBackground() {
         .map(p => {
           p.update()
           if (p.size > 0) {
-            const opacity = (p.life / 100) * 0.7
-            ctx.fillStyle = `hsla(${p.hue}, 80%, 65%, ${opacity})`
+            const opacity = (p.life / 100) * 0.45
+            ctx.fillStyle = `hsla(${p.hue}, 70%, 72%, ${opacity})`
             ctx.beginPath()
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
             ctx.fill()
@@ -59,13 +63,17 @@ export default function SmokeBackground() {
         }
       }
 
-      if (Math.random() < 0.3) {
-        particlesRef.current.push(
-          new Particle(
-            Math.random() * canvas.width,
-            canvas.height - 50 + Math.random() * 50
+      const now = performance.now()
+      if (now - lastAutoGenRef.current > 120) {
+        if (Math.random() < 0.4) {
+          particlesRef.current.push(
+            new Particle(
+              Math.random() * canvas.width,
+              canvas.height - 50 + Math.random() * 50
+            )
           )
-        )
+        }
+        lastAutoGenRef.current = now
       }
 
       animationFrameRef.current = requestAnimationFrame(animate)
