@@ -3,14 +3,12 @@ import React from 'react'
 export default function SearchBar({ value, onChange }) {
   return (
     <div className="mb-6">
-      <label htmlFor="search" className="sr-only">Search contacts</label>
       <input
-        id="search"
         type="text"
+        placeholder="Search by name..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search by name..."
-        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-800 placeholder:text-gray-400 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm"
       />
     </div>
   )
