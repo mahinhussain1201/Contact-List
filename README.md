@@ -2,6 +2,9 @@
 
 A polished React application to browse, search, and manage contacts. It blends smooth micro-interactions, accessibility-minded controls, and delightful visuals like a particle background and animated accents.
 
+## Hosted Link 
+[Vercel](https://contact-list-nine-hazel.vercel.app/)
+
 ## Features
 
 - **Contact browsing and search**: Filter contacts via the top `SearchBar` with clear focus and borders.
@@ -80,9 +83,9 @@ src/
 
 ## Libraries Used
 
-- **React**: UI framework
-- **Tailwind CSS**: Utility-first styling (classes used throughout components)
-- **lucide-react**: Icons in `SearchBar` and elsewhere
+- **React**: Declarative component model, strong ecosystem, and state management hooks simplify building interactive UIs like `SearchBar`, `ContactList`, and the modal flow.
+- **Tailwind CSS**: Utility-first classes enable rapid iteration and consistent design tokens (spacing, colors, radii) without maintaining large CSS files; supports responsive and a11y states inline.
+- **lucide-react**: Lightweight, crisp SVG icon set with React wrappers; easy to tree-shake and style with Tailwind classes.
 
 ## Contributing
 
