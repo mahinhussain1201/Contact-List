@@ -65,6 +65,12 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
 
   return (
     <div className="relative">
+      <style>{`
+        @keyframes rotBGimg {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       <div className="space-y-8">
         {Array.from(groups.keys()).sort().map((letter) => (
           <section key={letter} ref={(el) => { sectionRefs.current[letter] = el }} id={`section-${letter}`}>
@@ -74,13 +80,26 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
               {groups.get(letter).map((contact, idx) => (
                 <div key={contact?.login?.uuid || `${letter}-${idx}`} className="relative">
-                  {/* Gradient border wrapper */}
-                  <div className="rounded-2xl p-[1px] bg-gradient-to-br from-purple-300/40 via-blue-200/30 to-pink-200/40">
-                    <div className="group relative rounded-2xl bg-white/80 backdrop-blur-md shadow-lg ring-1 ring-white/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] overflow-hidden">
-                      {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+                    {/* Rotating gradient border (full perimeter) */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100"
+                      style={{
+                        backgroundImage: 'conic-gradient(from 0deg, #93c5fd, #c4b5fd, #fbcfe8, #93c5fd)',
+                        animation: 'rotBGimg 3s linear infinite',
+                        transition: 'opacity 0.2s linear',
+                        willChange: 'transform'
+                      }}
+                    />
+                    {/* Inset panel to create border effect */}
+                    <div className="absolute inset-[5px] rounded-[15px] bg-white/80 backdrop-blur-md ring-1 ring-white/30" />
 
-                      <div className="relative p-5">
+                    {/* Subtle gradient content overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Content */}
+                    <div className="relative z-10 p-5">
                         <div className="flex items-start gap-4">
                           <div className="relative">
                             {contact?.picture?.thumbnail && !/placeholder\.com/.test(contact?.picture?.thumbnail) ? (
@@ -119,7 +138,6 @@ export default function ContactList({ contacts, loading, error, query, onDelete 
                             Delete
                           </button>
                         </div>
-                      </div>
                     </div>
                   </div>
                 </div>
